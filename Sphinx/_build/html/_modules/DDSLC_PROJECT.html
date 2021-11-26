@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DDSLC_PROJECT &mdash; AEH  documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> AEH
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../docs/DDSLC_PROJECT.html">DDSLC_PROJECT module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AEH</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      <li>DDSLC_PROJECT</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for DDSLC_PROJECT</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># coding: utf-8</span>
+
+<span class="c1"># # Home Credit Default Risk</span>
+
+<span class="c1"># # creer un modèle de machine learning qui doit etre capable de prédire si oui ou non un couple peut avoir droit à un pret immobilier.</span>
+<span class="c1">#NOM:HASSAN BACHACHA,EMERIC BERTIN,ALAIN NGOMEDJ</span>
+<span class="c1"># In[576]:</span>
+
+<span class="sd">&quot;&quot;&quot; Importation of libraries&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+
+
+<span class="c1"># # DATA LOADING</span>
+
+<span class="c1"># In[577]:</span>
+
+
+<span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;application_train.csv&#39;</span><span class="p">)</span>
+<span class="n">data1</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;application_test.csv&#39;</span><span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+
+<span class="c1"># In[578]:</span>
+
+
+<span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="c1">#taille de mon dataset</span>
+
+
+<span class="c1"># In[579]:</span>
+
+
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;TARGET&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+
+<span class="c1"># In[580]:</span>
+
+
+<span class="c1">#we drop columns with more than 65% missing values</span>
+<div class="viewcode-block" id="drop_60"><a class="viewcode-back" href="../docs/DDSLC_PROJECT.html#DDSLC_PROJECT.drop_60">[docs]</a><span class="k">def</span> <span class="nf">drop_60</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="n">nb_na</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">v</span><span class="o">=</span><span class="n">nb_na</span><span class="p">[</span><span class="n">nb_na</span><span class="o">&gt;</span><span class="mf">0.65</span><span class="p">]</span>
+    <span class="n">l</span><span class="o">=</span><span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+    <span class="n">data1</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data1</span></div>
+
+
+<span class="c1"># In[581]:</span>
+
+
+<span class="n">data</span><span class="o">=</span><span class="n">drop_60</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">data1</span><span class="o">=</span><span class="n">drop_60</span><span class="p">(</span><span class="n">data1</span><span class="p">)</span>
+
+
+<span class="c1"># In[582]:</span>
+
+
+<span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+
+
+<span class="c1"># In[583]:</span>
+
+
+<span class="n">data</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+
+
+<span class="c1"># In[584]:</span>
+
+
+<span class="n">data</span><span class="o">.</span><span class="n">dtypes</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="c1">#The differents types in my dataframes</span>
+
+
+<span class="c1"># In[585]:</span>
+
+
+<div class="viewcode-block" id="check_na"><a class="viewcode-back" href="../docs/DDSLC_PROJECT.html#DDSLC_PROJECT.check_na">[docs]</a><span class="k">def</span> <span class="nf">check_na</span><span class="p">(</span><span class="n">feature</span><span class="p">):</span>
+    <span class="n">count</span><span class="o">=</span><span class="mi">0</span>
+    <span class="nb">list</span><span class="o">=</span><span class="p">[]</span>
+    <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">feature</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">el</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="nb">list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">el</span><span class="p">)</span>
+            <span class="n">count</span><span class="o">+=</span><span class="mi">1</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> columns with missing values&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">count</span><span class="p">))</span></div>
+
+
+<span class="c1"># In[586]:</span>
+
+
+<span class="n">categorical</span><span class="o">=</span><span class="p">[</span><span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">dtypes</span><span class="o">==</span><span class="s1">&#39;object&#39;</span><span class="p">]</span>
+<span class="n">categorical1</span><span class="o">=</span><span class="p">[</span><span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">data1</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">data1</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">dtypes</span><span class="o">==</span><span class="s1">&#39;object&#39;</span><span class="p">]</span>
+<span class="n">categorical</span>
+
+
+<span class="c1"># In[587]:</span>
+
+
+<span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+
+<span class="c1"># In[588]:</span>
+
+
+<span class="n">float_</span><span class="o">=</span><span class="p">[</span><span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">dtypes</span><span class="o">==</span><span class="s1">&#39;float64&#39;</span><span class="p">]</span>
+<span class="n">float1_</span><span class="o">=</span><span class="p">[</span><span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">data1</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">data1</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">dtypes</span><span class="o">==</span><span class="s1">&#39;float64&#39;</span><span class="p">]</span>
+
+
+<span class="c1"># In[589]:</span>
+
+
+<span class="n">int_</span><span class="o">=</span><span class="p">[</span><span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">dtypes</span><span class="o">==</span><span class="s1">&#39;int64&#39;</span><span class="p">]</span>
+<span class="n">int1_</span><span class="o">=</span><span class="p">[</span><span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">data1</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">data1</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">dtypes</span><span class="o">==</span><span class="s1">&#39;int64&#39;</span><span class="p">]</span>
+<span class="n">int_</span>
+
+
+<span class="c1"># In[590]:</span>
+
+
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;DAYS_BIRTH&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+
+<span class="c1"># In[591]:</span>
+
+
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;DAYS_BIRTH&#39;</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="o">-</span><span class="mi">365</span><span class="p">)</span>
+<span class="n">data1</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">data1</span><span class="p">[</span><span class="s1">&#39;DAYS_BIRTH&#39;</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="o">-</span><span class="mi">365</span><span class="p">)</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+
+
+<span class="c1"># In[592]:</span>
+
+
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;DAYS_EMPLOYED&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+
+<span class="c1"># In[593]:</span>
+
+
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;YEAR_EMPLOYED&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;DAYS_EMPLOYED&#39;</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="o">-</span><span class="mi">365</span><span class="p">)</span>
+<span class="n">data1</span><span class="p">[</span><span class="s1">&#39;YEAR_EMPLOYED&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">data1</span><span class="p">[</span><span class="s1">&#39;DAYS_EMPLOYED&#39;</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="o">-</span><span class="mi">365</span><span class="p">)</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;YEAR_EMPLOYED&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+
+
+<span class="c1"># In[594]:</span>
+
+
+<span class="c1">#Number of missing value in categorical columns</span>
+<span class="n">check_na</span><span class="p">(</span><span class="n">categorical</span><span class="p">)</span>
+
+
+<span class="c1"># In[595]:</span>
+
+
+<span class="n">check_na</span><span class="p">(</span><span class="n">categorical1</span><span class="p">)</span>
+
+
+<span class="c1"># In[596]:</span>
+
+
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;NAME_TYPE_SUITE&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+
+<span class="c1"># In[597]:</span>
+
+
+<span class="n">data</span><span class="p">[</span><span class="n">categorical</span><span class="p">]</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">categorical</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">&quot;Unknown&quot;</span><span class="o">+</span><span class="n">data</span><span class="p">[</span><span class="n">categorical</span><span class="p">])</span>
+<span class="n">data1</span><span class="p">[</span><span class="n">categorical1</span><span class="p">]</span><span class="o">=</span><span class="n">data1</span><span class="p">[</span><span class="n">categorical1</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">&quot;Unknown&quot;</span><span class="o">+</span><span class="n">data1</span><span class="p">[</span><span class="n">categorical1</span><span class="p">])</span>
+
+
+<span class="c1"># In[598]:</span>
+
+
+<span class="n">check_na</span><span class="p">(</span><span class="n">categorical</span><span class="p">)</span>
+
+
+<span class="c1"># In[599]:</span>
+
+
+<span class="n">check_na</span><span class="p">(</span><span class="n">float_</span><span class="p">)</span>
+
+
+<span class="c1"># In[600]:</span>
+
+
+<span class="n">data</span><span class="p">[</span><span class="n">float_</span><span class="p">]</span><span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">float_</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">float_</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+<span class="n">data1</span><span class="p">[</span><span class="n">float1_</span><span class="p">]</span><span class="o">=</span> <span class="n">data1</span><span class="p">[</span><span class="n">float1_</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">data1</span><span class="p">[</span><span class="n">float1_</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+
+
+<span class="c1"># In[601]:</span>
+
+
+<span class="n">check_na</span><span class="p">(</span><span class="n">int_</span><span class="p">)</span>
+
+
+<span class="c1"># In[602]:</span>
+
+
+<span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;DAYS_BIRTH&#39;</span><span class="p">,</span><span class="s1">&#39;DAYS_EMPLOYED&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">data1</span><span class="o">=</span><span class="n">data1</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;DAYS_BIRTH&#39;</span><span class="p">,</span><span class="s1">&#39;DAYS_EMPLOYED&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="c1"># In[603]:</span>
+
+
+<span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+
+
+<span class="c1"># In[604]:</span>
+
+
+<span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+
+
+<span class="c1"># In[605]:</span>
+
+
+<span class="n">cmap</span><span class="o">=</span><span class="nb">abs</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">corr</span><span class="p">()[</span><span class="s1">&#39;TARGET&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">cmap</span>
+
+
+<span class="c1"># In[606]:</span>
+
+
+<span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+
+
+<span class="c1"># In[607]:</span>
+
+
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
+<span class="n">x</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TARGET&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;THE DISTRIBUTION OF REPAID LOAN OR NOT&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;TARGET&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Number of observations&#39;</span><span class="p">)</span><span class="c1">#most of the make loan have been repaid</span>
+
+
+<span class="c1"># In[608]:</span>
+
+
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;NAME_INCOME_TYPE&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+
+<span class="c1"># In[609]:</span>
+
+
+<span class="n">x</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TARGET&#39;</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span><span class="c1">#on essaie d&#39;en apprendre d&#39;avantages sur les personnes qui ont eu à rembourser leurs prets</span>
+
+
+<span class="c1"># In[610]:</span>
+
+
+<span class="n">target_0</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">target_0</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+
+<span class="sd">&quot;&quot;&quot;Le crédit renouvelable (revolving loan) est un contrat de prêt permettant de mettre à disposition de l&#39;emprunteur une somme d&#39;argent. Ce crédit est un contrat d&#39;un an renouvelable. Le montant mis à la disposition de l&#39;emprunteur se reconstitue au fur et à mesure de ses remboursements.&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;un crédit de trésorerie(cash loan) est un crédit à court terme qui peut-être aussi bien accordé aux entreprises qu&#39;aux particuliers. Lorsqu&#39;une entreprise y a recourt, celle-ci pourra disposer temporairement de la trésorerie utile à son fonctionnement. Le remboursement se fera bien entendu à court terme &quot;&quot;&quot;</span>
+<span class="c1"># In[611]:</span>
+
+
+
+
+<span class="n">x</span><span class="o">=</span><span class="n">target_0</span><span class="p">[</span><span class="s1">&#39;NAME_CONTRACT_TYPE&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;REPARTITION OF NAME CONTRACT TYPE BASED ON THE REPAID LOAN&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;NAME CONTRACT TYPE&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Number of observations&#39;</span><span class="p">)</span><span class="c1">#the majority of person who repaid their loan have done a cash loan(pret de tresorerie).it means that they already had enough money for their operations </span>
+
+
+<span class="c1"># In[612]:</span>
+
+
+<span class="kn">from</span> <span class="nn">bokeh.transform</span> <span class="kn">import</span> <span class="n">cumsum</span>
+<span class="kn">from</span> <span class="nn">bokeh.palettes</span> <span class="kn">import</span> <span class="n">viridis</span>
+<span class="kn">from</span> <span class="nn">bokeh.io</span> <span class="kn">import</span> <span class="n">show</span><span class="p">,</span> <span class="n">output_notebook</span>
+<span class="kn">from</span> <span class="nn">bokeh.plotting</span> <span class="kn">import</span> <span class="n">figure</span>
+<span class="kn">from</span> <span class="nn">bokeh.transform</span> <span class="kn">import</span> <span class="n">factor_cmap</span>
+<span class="kn">from</span> <span class="nn">bokeh.models</span> <span class="kn">import</span> <span class="n">ColumnDataSource</span>
+<span class="kn">from</span> <span class="nn">bokeh.palettes</span> <span class="kn">import</span> <span class="n">Spectral6</span>
+<span class="kn">from</span> <span class="nn">bokeh.transform</span> <span class="kn">import</span> <span class="n">dodge</span>
+<span class="kn">from</span> <span class="nn">bokeh.palettes</span> <span class="kn">import</span> <span class="n">Spectral9</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">pi</span>
+
+
+<span class="c1"># In[613]:</span>
+
+
+<span class="n">target_0</span><span class="p">[</span><span class="s1">&#39;CNT_FAM_MEMBERS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+
+
+<span class="c1"># In[614]:</span>
+
+
+<span class="n">z</span><span class="o">=</span><span class="n">target_0</span><span class="p">[</span><span class="n">target_0</span><span class="p">[</span><span class="s1">&#39;NAME_CONTRACT_TYPE&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;Cash loans&#39;</span><span class="p">]</span>
+<span class="n">target_1</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="n">y</span><span class="o">=</span><span class="n">target_1</span><span class="p">[</span><span class="s1">&#39;OCCUPATION_TYPE&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span><span class="c1">#to know the occupation type of person who repaid loan after take cash loan </span>
+
+
+<span class="n">continent</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Laborers&#39;</span><span class="p">,</span><span class="s1">&#39;Sales staff&#39;</span><span class="p">,</span><span class="s1">&#39;Core staff&#39;</span><span class="p">,</span><span class="s1">&#39;Managers&#39;</span><span class="p">,</span><span class="s1">&#39;Drivers&#39;</span><span class="p">,</span><span class="s1">&#39;High skill tech staff&#39;</span><span class="p">,</span><span class="s1">&#39;Accountants&#39;</span><span class="p">,</span><span class="s1">&#39;Medicine staff&#39;</span><span class="p">,</span><span class="s1">&#39;Security staff&#39;</span><span class="p">]</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">target_1</span><span class="o">.</span><span class="n">OCCUPATION_TYPE</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">target_1</span><span class="o">.</span><span class="n">OCCUPATION_TYPE</span><span class="p">)</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">nlargest</span><span class="p">(</span><span class="mi">10</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">50000</span><span class="p">]</span>
+
+<span class="n">source</span> <span class="o">=</span> <span class="n">ColumnDataSource</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">continent</span><span class="o">=</span><span class="n">continent</span><span class="p">,</span> <span class="n">counts</span><span class="o">=</span><span class="n">y</span><span class="p">))</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">figure</span><span class="p">(</span><span class="n">x_range</span><span class="o">=</span><span class="n">continent</span><span class="p">,</span> <span class="n">plot_width</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;OCCUPATION TYPE OF PERSON WHO TAKE CASH LOAN FOR REPAIR THEIR LOAN&quot;</span><span class="p">,</span>
+           <span class="n">tools</span><span class="o">=</span><span class="s1">&#39;hover&#39;</span><span class="p">,</span><span class="n">tooltips</span><span class="o">=</span><span class="s2">&quot;@counts&quot;</span><span class="p">)</span>
+
+<span class="n">p</span><span class="o">.</span><span class="n">vbar</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;continent&#39;</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s1">&#39;counts&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="s2">&quot;continent&quot;</span><span class="p">,</span><span class="n">line_color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">fill_color</span><span class="o">=</span><span class="n">factor_cmap</span><span class="p">(</span><span class="s1">&#39;continent&#39;</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="n">Spectral9</span><span class="p">,</span> <span class="n">factors</span><span class="o">=</span><span class="n">continent</span><span class="p">))</span>
+
+
+
+<span class="n">p</span><span class="o">.</span><span class="n">y_range</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">p</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="s2">&quot;top_right&quot;</span>
+<span class="n">p</span><span class="o">.</span><span class="n">legend</span><span class="o">.</span><span class="n">orientation</span> <span class="o">=</span> <span class="s2">&quot;horizontal&quot;</span>
+<span class="n">show</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+
+<span class="c1"># In[615]:</span>
+
+
+<span class="n">x</span><span class="o">=</span><span class="n">target_1</span><span class="p">[</span><span class="s1">&#39;NAME_INCOME_TYPE&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;REPARTITION OF NAME INCOME TYPE WHO REPAID LOAN WITH CASH LOAN&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;NAME INCOME TYPE&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Number of observations&#39;</span><span class="p">)</span>
+
+
+<span class="c1"># In[616]:</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span><span class="c1">#Age of persons who repairs their loan</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">target_1</span><span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">]</span> <span class="p">,</span> <span class="n">edgecolor</span> <span class="o">=</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Age of Client&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Age (years)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Count&#39;</span><span class="p">)</span>
+
+
+<span class="c1"># In[617]:</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;AMT_CREDIT&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;AMT_CREDIT&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;AMT_CREDIT&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Density&#39;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">kdeplot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;AMT_CREDIT&#39;</span><span class="p">],</span><span class="n">shade</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Distribution of AMT_CREDIT&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="c1"># In[618]:</span>
+
+
+<span class="n">x</span><span class="o">=</span><span class="n">target_1</span><span class="p">[</span><span class="s1">&#39;CODE_GENDER&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;REPARTITION OF GENDER WHO REPAID LOAN WITH CASH LOAN&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;CODE GENDER&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Number of observations&#39;</span><span class="p">)</span><span class="c1">#les femmes gagent lus que les hommes</span>
+
+
+<span class="c1"># In[619]:</span>
+
+
+<span class="c1">#les familles moins nombreuses(avec le moins d&#39;enfants) ont donc plus de chance de rembourser leur credit</span>
+<span class="n">x</span><span class="o">=</span><span class="n">target_1</span><span class="p">[</span><span class="s1">&#39;CNT_FAM_MEMBERS&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">pie</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="mi">10</span><span class="p">])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">autopct</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%.1f%%</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pctdistance</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot; REPAID CASH LOAN BASED ON THE FAMILY NUMBER &quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">);</span>
+<span class="n">pie</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;DeliveryPieChart.png&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># In[620]:</span>
+
+
+<span class="c1">#on fera de meme pour name_contract_type=revolved loan puis on remonte a target==1 une prochaine fois</span>
+
+
+<span class="c1"># # FEATURE ENGINEERING</span>
+
+<span class="c1"># ### We are firstly going to see our outliers among our numerical continuous columns</span>
+
+<span class="c1"># In[621]:</span>
+
+
+<span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+
+
+<span class="c1"># In[622]:</span>
+
+
+<span class="n">numerical</span><span class="o">=</span><span class="p">[</span><span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">dtypes</span><span class="o">!=</span><span class="s1">&#39;object&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;there are </span><span class="si">{}</span><span class="s2"> numericals columns&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">numerical</span><span class="p">)))</span>
+
+
+<span class="c1"># In[623]:</span>
+
+
+<span class="n">continuous</span> <span class="o">=</span> <span class="p">[]</span><span class="c1">#we want to see the number of continous values columns</span>
+<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">numerical</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">:</span>
+        <span class="n">continuous</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+        
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;There are </span><span class="si">{}</span><span class="s1"> continuous variables&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">continuous</span><span class="p">)))</span>
+
+
+<span class="c1"># In[624]:</span>
+
+
+<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">continuous</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="n">var</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Number of observation&#39;</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="c1"># In[625]:</span>
+
+
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;CODE_GENDER&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;CODE_GENDER&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;XNA&#39;</span><span class="p">,</span><span class="s1">&#39;Unknown_Gender&#39;</span><span class="p">)</span>
+<span class="n">data1</span><span class="p">[</span><span class="s1">&#39;CODE_GENDER&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">data1</span><span class="p">[</span><span class="s1">&#39;CODE_GENDER&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;XNA&#39;</span><span class="p">,</span><span class="s1">&#39;Unknown_Gender&#39;</span><span class="p">)</span>
+
+
+<span class="c1"># In[626]:</span>
+
+
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;CODE_GENDER&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+
+<span class="c1"># In[627]:</span>
+
+
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;TARGET&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+
+<span class="c1"># ### Encode my categorical columns values</span>
+
+<span class="c1"># In[628]:</span>
+
+
+<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">categorical</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39; has </span><span class="si">{}</span><span class="s2"> labels&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())))</span>
+
+
+<span class="c1"># In[629]:</span>
+
+
+<span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;ORGANIZATION_TYPE&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">data1</span><span class="o">=</span><span class="n">data1</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;ORGANIZATION_TYPE&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">categorical</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;ORGANIZATION_TYPE&#39;</span><span class="p">)</span>
+<span class="n">categorical1</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;ORGANIZATION_TYPE&#39;</span><span class="p">)</span>
+
+
+<span class="c1"># In[630]:</span>
+
+
+<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">categorical</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span><span class="o">&gt;</span><span class="mi">2</span><span class="p">:</span>
+        <span class="n">nts</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">var</span><span class="p">],</span><span class="n">drop_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">data</span><span class="p">,</span><span class="n">nts</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="n">var</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
+    <span class="k">else</span> <span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">var</span><span class="p">],</span><span class="n">drop_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+       
+        
+        
+        
+
+
+<span class="c1"># In[631]:</span>
+
+
+<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">categorical1</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data1</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span><span class="o">&gt;</span><span class="mi">2</span><span class="p">:</span>
+        <span class="n">nts</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">data1</span><span class="p">[</span><span class="n">var</span><span class="p">],</span><span class="n">drop_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">data1</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">data1</span><span class="p">,</span><span class="n">nts</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">data1</span><span class="o">=</span> <span class="n">data1</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="n">var</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
+    <span class="k">else</span> <span class="p">:</span>
+        <span class="n">data1</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">data1</span><span class="p">[</span><span class="n">var</span><span class="p">],</span><span class="n">drop_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="c1"># In[632]:</span>
+
+
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;TARGET&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+
+<span class="c1"># In[633]:</span>
+
+
+<span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+
+
+<span class="c1"># ### Scaling of columns with raw data which  varies widely</span>
+
+<span class="c1"># In[634]:</span>
+
+
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;TARGET&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+
+<span class="c1"># In[635]:</span>
+
+
+<span class="c1">#put the value of our continuous variables between 0 and 1 by using min max scaler</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">MinMaxScaler</span>
+
+<span class="n">scaler</span><span class="o">=</span><span class="n">MinMaxScaler</span><span class="p">(</span><span class="n">feature_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">continuous</span><span class="p">:</span>
+    <span class="n">data</span><span class="p">[[</span><span class="n">var</span><span class="p">]]</span><span class="o">=</span><span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">data</span><span class="p">[[</span><span class="n">var</span><span class="p">]])</span>
+    
+
+
+<span class="c1"># In[636]:</span>
+
+
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">MinMaxScaler</span>
+
+<span class="n">scaler</span><span class="o">=</span><span class="n">MinMaxScaler</span><span class="p">(</span><span class="n">feature_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">continuous</span><span class="p">:</span>
+    <span class="n">data1</span><span class="p">[[</span><span class="n">var</span><span class="p">]]</span><span class="o">=</span><span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">data1</span><span class="p">[[</span><span class="n">var</span><span class="p">]])</span>
+
+
+<span class="c1"># In[637]:</span>
+
+
+<span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+
+
+<span class="c1"># In[638]:</span>
+
+
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;TARGET&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+
+<span class="c1"># In[639]:</span>
+
+
+<span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+
+<span class="c1"># # SEPARATE TRAIN TEST SET</span>
+
+<span class="c1"># In[640]:</span>
+
+
+<span class="n">target_variable</span> <span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TARGET&#39;</span><span class="p">]</span>
+
+
+<span class="c1"># In[641]:</span>
+
+
+<span class="n">data</span><span class="p">,</span> <span class="n">data1</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">data1</span><span class="p">,</span> <span class="n">join</span> <span class="o">=</span> <span class="s1">&#39;inner&#39;</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+
+<span class="c1"># In[642]:</span>
+
+
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;TARGET&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">target_variable</span>
+
+
+<span class="c1"># In[643]:</span>
+
+
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">import</span> <span class="nn">xgboost</span> <span class="k">as</span> <span class="nn">xgb</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">plot_confusion_matrix</span>
+
+
+<span class="c1"># In[644]:</span>
+
+
+<span class="n">X</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="o">!=</span> <span class="s1">&#39;TARGET&#39;</span><span class="p">]</span>
+<span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;SK_ID_CURR&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="c1"># In[645]:</span>
+
+
+<span class="n">Y</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;TARGET&#39;</span><span class="p">]</span>
+<span class="n">Y</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+
+<span class="c1"># In[646]:</span>
+
+
+<span class="n">X_train</span><span class="p">,</span><span class="n">X_test</span><span class="p">,</span><span class="n">Y_train</span><span class="p">,</span><span class="n">Y_test</span><span class="o">=</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">X_test</span><span class="o">.</span><span class="n">shape</span>
+
+
+<span class="c1"># # MODEL TRAINNING AND PREDICTION</span>
+
+<span class="c1"># ### Xgboost Classifier</span>
+
+<span class="c1"># In[647]:</span>
+
+
+<span class="kn">import</span> <span class="nn">xgboost</span> <span class="k">as</span> <span class="nn">xgb</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">classification_report</span>
+<span class="n">xgb</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBClassifier</span><span class="p">(</span><span class="n">scale_pos_weight</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span><span class="n">objective</span><span class="o">=</span><span class="s2">&quot;binary:logistic&quot;</span><span class="p">,</span><span class="n">learning_rate</span><span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span> <span class="n">n_estimators</span><span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">xgb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
+
+
+<span class="c1"># In[648]:</span>
+
+
+<span class="n">y_pred</span><span class="o">=</span><span class="n">xgb</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">y_pred_auc</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+
+
+<span class="c1"># In[649]:</span>
+
+
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_auc_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">classification_report</span>
+
+<span class="n">roc_score</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span><span class="n">y_pred_auc</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;roc_auc_score: &quot;</span><span class="p">,</span><span class="n">roc_score</span><span class="p">)</span>
+
+<span class="n">acc_score</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy_score&quot;</span><span class="p">,</span><span class="n">acc_score</span><span class="p">)</span>
+
+
+<span class="c1"># In[650]:</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="n">classification_report</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+
+
+<span class="c1"># In[651]:</span>
+
+
+<span class="n">plot_confusion_matrix</span><span class="p">(</span><span class="n">xgb</span><span class="p">,</span>
+                       <span class="n">X_test</span><span class="p">,</span>
+                       <span class="n">Y_test</span><span class="p">,</span>
+                       <span class="n">values_format</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">,</span>
+                       <span class="n">display_labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;repaid loan&#39;</span> <span class="p">,</span><span class="s1">&#39;Did not repaid&#39;</span><span class="p">])</span>
+
+
+<span class="c1"># ### RandomForest Classifier</span>
+
+<span class="c1"># In[652]:</span>
+
+
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+<span class="n">RF</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="n">n_jobs</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">class_weight</span><span class="o">=</span><span class="s2">&quot;balanced&quot;</span><span class="p">)</span>
+<span class="n">RF</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">Y_train</span><span class="p">)</span>
+
+
+<span class="c1"># In[654]:</span>
+
+
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_auc_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+
+<span class="n">y_pred</span><span class="o">=</span><span class="n">RF</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">y_pred_auc</span> <span class="o">=</span><span class="n">RF</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">roc_score</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span><span class="n">y_pred_auc</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;roc_auc_score: &quot;</span><span class="p">,</span><span class="n">roc_score</span><span class="p">)</span>
+
+<span class="n">acc_score</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span><span class="n">y_pred</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy_score: &quot;</span><span class="p">,</span><span class="n">acc_score</span><span class="p">)</span>
+
+
+<span class="c1"># In[655]:</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="n">classification_report</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+
+
+<span class="c1"># ### GradientBossting Classifier</span>
+
+<span class="c1"># In[656]:</span>
+
+
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">GradientBoostingClassifier</span>
+
+
+<span class="c1"># In[657]:</span>
+
+
+<span class="n">GB</span> <span class="o">=</span> <span class="n">GradientBoostingClassifier</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">GB</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
+
+
+<span class="c1"># In[658]:</span>
+
+
+<span class="n">y_pred</span><span class="o">=</span><span class="n">GB</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">y_pred_auc</span> <span class="o">=</span> <span class="n">GB</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">roc_score</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span><span class="n">y_pred_auc</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;roc_auc_score: &quot;</span><span class="p">,</span><span class="n">roc_score</span><span class="p">)</span>
+
+<span class="n">acc_score</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span><span class="n">y_pred</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy_score: &quot;</span><span class="p">,</span><span class="n">acc_score</span><span class="p">)</span>
+
+
+<span class="c1"># # MLFLOW</span>
+
+<span class="c1"># #### MLFLOW On xgboost</span>
+
+<span class="c1"># In[659]:</span>
+
+
+<span class="kn">import</span> <span class="nn">xgboost</span> <span class="k">as</span> <span class="nn">xgb</span>
+<span class="kn">from</span> <span class="nn">xgboost</span> <span class="kn">import</span> <span class="n">XGBClassifier</span>
+<span class="kn">from</span> <span class="nn">mlflow.utils.environment</span> <span class="kn">import</span> <span class="n">_mlflow_conda_env</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">mlflow</span>
+<span class="kn">import</span> <span class="nn">mlflow.xgboost</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+
+<div class="viewcode-block" id="train_xgboost"><a class="viewcode-back" href="../docs/DDSLC_PROJECT.html#DDSLC_PROJECT.train_xgboost">[docs]</a><span class="k">def</span> <span class="nf">train_xgboost</span><span class="p">(</span><span class="n">lr</span><span class="p">,</span> <span class="n">n_estim</span><span class="p">):</span>
+    
+    <span class="k">with</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">start_run</span><span class="p">(</span><span class="n">run_name</span><span class="o">=</span><span class="s1">&#39;xgboost&#39;</span><span class="p">):</span>
+               
+        <span class="n">xgb</span> <span class="o">=</span><span class="n">XGBClassifier</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span> <span class="n">lr</span><span class="p">,</span> <span class="n">n_estimators</span><span class="o">=</span> <span class="n">n_estim</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span> <span class="mi">42</span><span class="p">,</span> <span class="n">subsample</span><span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">colsample_bytree</span><span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">objective</span><span class="o">=</span> <span class="s1">&#39;binary:logistic&#39;</span><span class="p">,</span><span class="n">max_depth</span><span class="o">=</span> <span class="mi">3</span><span class="p">,</span><span class="n">scale_pos_weight</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="n">xgb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">xgboost</span><span class="o">.</span><span class="n">autolog</span><span class="p">()</span>
+        
+        <span class="n">y_pred_auc</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+       
+        <span class="n">roc</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span> <span class="n">y_pred_auc</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span><span class="n">y_pred</span><span class="p">)</span>
+       
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span><span class="s2">&quot;auc_roc&quot;</span><span class="p">,</span><span class="n">roc</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span><span class="s2">&quot;accuracy_score&quot;</span><span class="p">,</span><span class="n">acc</span><span class="p">)</span>
+       
+        
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s1">&#39;learning_rate&#39;</span><span class="p">,</span> <span class="n">lr</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s1">&#39;n_estimators&#39;</span><span class="p">,</span> <span class="n">n_estim</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s1">&#39;seed&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s1">&#39;subsample&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s1">&#39;colsamples_bytree&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s1">&#39;objective&#39;</span><span class="p">,</span><span class="s1">&#39;binary:logistic&#39;</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s1">&#39;max_depth&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s1">&#39;scale_pos_weight&#39;</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
+
+
+        <span class="c1">#log model</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">xgboost</span><span class="o">.</span><span class="n">log_model</span><span class="p">(</span><span class="n">xgb</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;roc_auc&quot;</span><span class="p">,</span><span class="n">roc</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;accuracy_score&quot;</span><span class="p">,</span><span class="n">acc</span><span class="p">)</span></div>
+        
+
+
+<span class="c1"># #### MLFLOW ON Random Forest </span>
+
+<span class="c1"># In[660]:</span>
+
+
+<span class="kn">import</span> <span class="nn">mlflow</span>
+<span class="kn">import</span> <span class="nn">mlflow.sklearn</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_auc_score</span>
+
+<div class="viewcode-block" id="train_random"><a class="viewcode-back" href="../docs/DDSLC_PROJECT.html#DDSLC_PROJECT.train_random">[docs]</a><span class="k">def</span> <span class="nf">train_random</span><span class="p">(</span><span class="n">numb_est</span><span class="p">):</span>
+     <span class="k">with</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">start_run</span><span class="p">(</span><span class="n">run_name</span><span class="o">=</span><span class="s1">&#39;random forest&#39;</span><span class="p">):</span>
+        
+      
+        <span class="n">RF</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_jobs</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">class_weight</span><span class="o">=</span><span class="s2">&quot;balanced&quot;</span><span class="p">)</span>
+        <span class="n">RF</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">Y_train</span><span class="p">)</span>
+      
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">xgboost</span><span class="o">.</span><span class="n">autolog</span><span class="p">()</span>
+      
+        
+        <span class="n">y_pred_auc</span> <span class="o">=</span> <span class="n">RF</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">RF</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+        
+      
+       
+       
+        <span class="n">roc_auc</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span> <span class="n">y_pred_auc</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span><span class="n">y_pred</span><span class="p">)</span>
+        
+        
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span><span class="s2">&quot;auc_roc&quot;</span><span class="p">,</span><span class="n">roc_auc</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span><span class="s2">&quot;accuracy_score&quot;</span><span class="p">,</span><span class="n">acc</span><span class="p">)</span>
+        
+       
+        
+       
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s1">&#39;n_estimators&#39;</span><span class="p">,</span> <span class="n">numb_est</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s1">&#39;random_state&#39;</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s1">&#39;verbose&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s1">&#39;n_jobs&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s1">&#39;class_weight&#39;</span><span class="p">,</span><span class="s1">&#39;balanced&#39;</span><span class="p">)</span>
+        
+
+
+        <span class="c1"># log model</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">sklearn</span><span class="o">.</span><span class="n">log_model</span><span class="p">(</span><span class="n">RF</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;roc_auc&quot;</span><span class="p">,</span><span class="n">roc_auc</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;accuracy_score&quot;</span><span class="p">,</span><span class="n">acc</span><span class="p">)</span></div>
+
+
+<span class="c1"># #### MLFLOW ON GradientBoosting </span>
+
+<span class="c1"># In[661]:</span>
+
+
+<span class="kn">import</span> <span class="nn">mlflow.sklearn</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">GradientBoostingClassifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_auc_score</span>
+
+
+<div class="viewcode-block" id="train_GB"><a class="viewcode-back" href="../docs/DDSLC_PROJECT.html#DDSLC_PROJECT.train_GB">[docs]</a><span class="k">def</span> <span class="nf">train_GB</span><span class="p">(</span><span class="n">lr</span><span class="p">,</span> <span class="n">numb_est</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">start_run</span><span class="p">(</span><span class="n">run_name</span> <span class="o">=</span><span class="s1">&#39;GrandientBoosting&#39;</span><span class="p">):</span>
+        
+        
+        <span class="n">gbc</span> <span class="o">=</span> <span class="n">GradientBoostingClassifier</span><span class="p">(</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="n">lr</span><span class="p">,</span> <span class="n">n_estimators</span> <span class="o">=</span> <span class="n">numb_est</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+        <span class="n">gbc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
+      
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">xgboost</span><span class="o">.</span><span class="n">autolog</span><span class="p">()</span>
+      
+        
+        <span class="n">y_pred_auc</span> <span class="o">=</span> <span class="n">gbc</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">gbc</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+      
+       
+       
+        <span class="n">roc</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span> <span class="n">y_pred_auc</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">Y_test</span><span class="p">,</span><span class="n">y_pred</span><span class="p">)</span>
+        
+        
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span><span class="s2">&quot;auc_roc&quot;</span><span class="p">,</span><span class="n">roc</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span><span class="s2">&quot;accuracy_score&quot;</span><span class="p">,</span><span class="n">acc</span><span class="p">)</span>
+        
+       
+        
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s1">&#39;learning_rate&#39;</span><span class="p">,</span> <span class="n">lr</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s1">&#39;n_estimators&#39;</span><span class="p">,</span> <span class="n">numb_est</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s1">&#39;random_state&#39;</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+        
+        
+        
+
+
+        <span class="c1"># log model</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">sklearn</span><span class="o">.</span><span class="n">log_model</span><span class="p">(</span><span class="n">gbc</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;roc_auc&quot;</span><span class="p">,</span><span class="n">roc</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;accuracy_score&quot;</span><span class="p">,</span><span class="n">acc</span><span class="p">)</span></div>
+
+
+<span class="c1"># In[662]:</span>
+
+
+<span class="n">train_xgboost</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+
+
+<span class="c1"># In[663]:</span>
+
+
+<span class="n">train_random</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+
+
+<span class="c1"># In[664]:</span>
+
+
+<span class="n">train_GB</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span><span class="mi">50</span><span class="p">)</span>
+
+
+<span class="c1"># # MODEL EXPLAINATION</span>
+
+<span class="c1"># In[665]:</span>
+
+
+<span class="kn">import</span> <span class="nn">shap</span>
+<span class="n">shap</span><span class="o">.</span><span class="n">initjs</span><span class="p">()</span>
+
+
+<span class="c1"># In[666]:</span>
+
+
+<span class="kn">import</span> <span class="nn">eli5</span>
+<span class="n">eli5</span><span class="o">.</span><span class="n">show_weights</span><span class="p">(</span><span class="n">GB</span><span class="p">)</span>
+
+
+<span class="c1"># In[667]:</span>
+
+
+<span class="n">rand</span> <span class="o">=</span> <span class="n">X_train</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+
+<span class="c1"># In[668]:</span>
+
+
+<span class="n">explainer</span> <span class="o">=</span> <span class="n">shap</span><span class="o">.</span><span class="n">TreeExplainer</span><span class="p">(</span><span class="n">GB</span><span class="p">)</span>
+
+
+<span class="c1"># In[669]:</span>
+
+
+<span class="n">shap_values</span> <span class="o">=</span> <span class="n">explainer</span><span class="o">.</span><span class="n">shap_values</span><span class="p">(</span><span class="n">rand</span><span class="p">)</span>
+
+
+<span class="c1"># In[670]:</span>
+
+
+<span class="n">feature_names</span><span class="o">=</span><span class="n">X_train</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+
+<span class="c1"># In[671]:</span>
+
+
+<span class="n">shap</span><span class="o">.</span><span class="n">force_plot</span><span class="p">(</span><span class="n">explainer</span><span class="o">.</span><span class="n">expected_value</span><span class="p">,</span> <span class="n">shap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span> <span class="n">X_train</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,:])</span>
+
+
+<span class="c1"># In[672]:</span>
+
+
+<span class="n">shap</span><span class="o">.</span><span class="n">dependence_plot</span><span class="p">(</span><span class="s2">&quot;DAYS_REGISTRATION&quot;</span><span class="p">,</span> <span class="n">shap_values</span><span class="p">,</span> <span class="n">rand</span><span class="p">)</span>
+
+
+<span class="c1"># In[673]:</span>
+
+
+<span class="n">shap</span><span class="o">.</span><span class="n">summary_plot</span><span class="p">(</span><span class="n">shap_values</span><span class="p">,</span> <span class="n">rand</span><span class="p">,</span><span class="n">feature_names</span><span class="o">=</span> <span class="n">feature_names</span><span class="p">)</span>
+
+
+<span class="c1"># In[ ]:</span>
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, AEH.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
